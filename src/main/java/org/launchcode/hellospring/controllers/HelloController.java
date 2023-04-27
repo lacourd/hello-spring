@@ -1,11 +1,12 @@
 package org.launchcode.hellospring.controllers;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @Controller
-@RequestMapping("hello")
-@ResponseBody
 public class HelloController {
 //Handles request at path /hello
 //    @GetMapping("hello")
@@ -15,31 +16,47 @@ public class HelloController {
 //    }
 
     @GetMapping("goodbye")
-
+    @ResponseBody
     public String goodbye(){
         return "Goodbye, Spring!";
     }
 
 //    handles request of the form /hello?name=LaunchCode
-    @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
-    public String helloWithQueryParam(@RequestParam String name){
-        return "Hello, " + name + "!";
+    @RequestMapping(value = "hello", method = {RequestMethod.GET, RequestMethod.POST})
+    public String helloWithQueryParam(@RequestParam String name, Model model){
+        String greeting = "Hello, " + name + "!";
+        model.addAttribute("greeting", greeting);
+        return "hello";
     }
 
 //    handles requests of the form /hello/LaunchCode
-    @GetMapping("{name}")
-    public String helloWithPathParam(@PathVariable String name){
-        return "Hello, " + name + "!";
+    @GetMapping("hello/{name}")
+    public String helloWithPathParam(@PathVariable String name, Model model){
+        String greeting = "Hello, " + name + "!";
+        model.addAttribute("greeting", greeting);
+        return "hello";
     }
 
 //Include a new public static method, createMessage, in the HelloController that takes a name as well as a language string. Based on the language string, you’ll display the proper greeting.
     @RequestMapping(value = "hello", method = RequestMethod.POST)
+    @ResponseBody
      public String helloPost(@RequestParam String name, @RequestParam String language) {
         if (name == null) {
             name = "World";
         }
         return createMessage(name, language);
 
+    }
+
+    @GetMapping("hello-names")
+    public String helloNames(Model model) {
+        ArrayList<String> names = new ArrayList<>();
+        names.add("LaunchCode");
+        names.add("Darren");
+        names.add("Java");
+        names.add("JavaScript");
+        model.addAttribute("names", names);
+        return "hello-list";
     }
 
     public static String createMessage(String name, String language) {
@@ -59,21 +76,6 @@ public class HelloController {
     }
     @GetMapping("form")
     public String helloForm() {
-        return "<html>" +
-                "<body>" +
-                "<form action='hello' method='post'>" +
-                "<input type='text' name='name'>" +
-                "<select name='language' id='language-select'>" +
-                "    <option value=''>--Please choose a language--</option>" +
-                "    <option value='english'>English</option>" +
-                "    <option value='french'>French</option>" +
-                "    <option value='portuguese'>Portuguese</option>" +
-                "    <option value='german'>German</option>" +
-                "    <option value='latin'>Latin</option>" +
-                "</select>" +
-                "<input type='submit' value='Greet me!'>" +
-                "</form>" +
-                "</body>" +
-                "</html>";
+        return "form";
     }
 }
